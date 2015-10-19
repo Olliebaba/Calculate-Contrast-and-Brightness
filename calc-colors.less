@@ -1,0 +1,82 @@
+// This is based on information found here:
+// http://www.had2know.com/technology/color-contrast-calculator-web-design.html
+
+.calculate-contrast
+  (@first-color, @second-color){
+    
+    // @first-color's RGB
+    @first-red: red(@first-color);
+    @first-green: green(@first-color);
+    @first-blue: blue(@first-color);
+    
+    // @second-color's RGB
+    @second-red: red(@second-color);
+    @second-green: green(@second-color);
+    @second-blue: blue(@second-color);
+    
+    // contrast values between the two
+    // RGB
+    @contrast-difference: abs(@first-red - @second-red) + abs(@first-green - @second-green) + abs(@first-blue - @second-blue);
+    
+    // displays results of contrast calcs
+    .contrast-pass-fail(@i) when (@i >= 500){
+      .contrast {
+        &:after {
+          display: block;
+          content:"PASS: @{contrast-difference}";
+        }
+      }
+    }
+    .contrast-pass-fail(@i) when (@i <= 500){
+      .contrast {
+        &:after {
+          display: block;
+          content:"FAIL: @{contrast-difference}";
+        }
+      }
+    }
+    .contrast-pass-fail(@contrast-difference);
+    
+    // brightness values
+    @first-brightness: (((299 * @first-red) + (587 * @first-green) + (114 * @first-blue)) / 1000);
+    @second-brightness: (((299 * @second-red) + (587 * @second-green) + (114 * @second-blue)) / 1000);
+    // brightness difference
+    @brightness-difference: round(abs(@first-brightness - @second-brightness));
+    // displays results of brightness calcs
+    .brightness-pass-fail(@i) when (@i >=125){
+      .brightness {
+        &:after {
+          content:"PASS: @{i}";
+          display: block;
+        }
+      }
+    }
+    .brightness-pass-fail(@i) when (@i <=125){
+      .brightness {
+        &:after {
+          content:"Fail: @{i}";
+          display: block;
+        }
+      }
+    }
+    .brightness-pass-fail(@brightness-difference);
+    
+    // styles the container for readability
+    background-color: @first-color;
+    color: @second-color;
+}
+
+.contrast {
+   display: block;
+    &:before {
+      content:"Contrast:";
+      display: block;
+    }
+}
+.brightness {
+   display: block;
+  &:before {
+    content:"Brightness:";
+    display: block;
+  }
+}
